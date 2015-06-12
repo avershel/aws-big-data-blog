@@ -116,26 +116,24 @@ public class KinesisRecordProcessor implements IRecordProcessor {
            String data = null;
            for (int i = 0; i < NUM_RETRIES; i++) {
                try {
-            	   
-            	               	   
-            	   Coordinate c = null;
-            	   
-            	   try {
                    // For this app, we interpret the payload as UTF-8 chars.
                    data = decoder.decode(record.getData()).toString();
-                   
+
                    // use the ObjectMapper to read the json string and create a tree
                    JsonNode node = mapper.readTree(data);
-			String tweet = mapper.writeValueAsString(node);
-                	   jedis.publish("tweet", tweet);
-                   
-            	   } catch(Exception e) {
-            		   // if we get here, its bad data, ignore and move on to next record
-            	   }
-            	   
-          
-      
-					
+                        String tweet = mapper.writeValueAsString(node);
+                           jedis.publish("tweet", tweet);
+
+                   } catch(Exception e) {
+                           // if we get here, its bad data, ignore and move on to next record
+                   }
+
+                   if(c != null) {
+                           String jsonCoords = mapper.writeValueAsString(c);
+                           jedis.publish("loc", jsonCoords);
+                   }
+
+
                    processedSuccessfully = true;
                    break;
                } catch (Throwable t) {
