@@ -115,6 +115,7 @@ public class KinesisRecordProcessor implements IRecordProcessor {
            boolean processedSuccessfully = false;
            String data = null;
            for (int i = 0; i < NUM_RETRIES; i++) {
+           	try{
                try {
                    // For this app, we interpret the payload as UTF-8 chars.
                    data = decoder.decode(record.getData()).toString();
@@ -127,12 +128,6 @@ public class KinesisRecordProcessor implements IRecordProcessor {
                    } catch(Exception e) {
                            // if we get here, its bad data, ignore and move on to next record
                    }
-
-                   if(c != null) {
-                           String jsonCoords = mapper.writeValueAsString(c);
-                           jedis.publish("loc", jsonCoords);
-                   }
-
 
                    processedSuccessfully = true;
                    break;
