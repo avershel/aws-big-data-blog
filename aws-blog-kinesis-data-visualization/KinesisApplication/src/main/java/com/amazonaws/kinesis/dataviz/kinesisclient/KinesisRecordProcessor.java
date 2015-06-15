@@ -123,6 +123,7 @@ public class KinesisRecordProcessor implements IRecordProcessor {
                    // use the ObjectMapper to read the json string and create a tree
                    JsonNode node = mapper.readTree(data);
                         String tweet = mapper.writeValueAsString(node);
+                        System.out.println("Publishing tweet");
                            jedis.publish("tweet", tweet);
                            System.out.println("Getting Tweet From Jedis");
                            String check1 = jedis.get("tweet");
