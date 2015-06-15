@@ -126,7 +126,7 @@ public class KinesisRecordProcessor implements IRecordProcessor {
                            jedis.publish("tweet", tweet);
                            System.out.println("Getting Tweet From Jedis");
                            String check1 = jedis.get("tweet");
-                           System.out.println("###########################################")
+                           System.out.println("###########################################");
                           
                            	System.out.println(check1);
                            
