@@ -124,11 +124,12 @@ public class KinesisRecordProcessor implements IRecordProcessor {
                    JsonNode node = mapper.readTree(data);
                         String tweet = mapper.writeValueAsString(node);
                            jedis.publish("tweet", tweet);
+                           System.out.println("Getting Tweet From Jedis");
                            String check1 = jedis.get("tweet");
-                           if(i < 10)
-                           {
+                           System.out.println("###########################################")
+                          
                            	System.out.println(check1);
-                           }
+                           
 
                    } catch(Exception e) {
                            // if we get here, its bad data, ignore and move on to next record
