@@ -114,7 +114,9 @@ public class KinesisRecordProcessor implements IRecordProcessor {
        for (Record record : records) {
            boolean processedSuccessfully = false;
            String data = null;
+           /*******
            for (int i = 0; i < NUM_RETRIES; i++) {
+           	
            	try{
                try {
                	System.out.println("Decoding data");
@@ -149,6 +151,7 @@ public class KinesisRecordProcessor implements IRecordProcessor {
                    LOG.warn("Caught throwable while processing record " + record, t);
                }
                
+               
                // backoff if we encounter an exception.
                try {
                    Thread.sleep(BACKOFF_TIME_IN_MILLIS);
@@ -156,7 +159,55 @@ public class KinesisRecordProcessor implements IRecordProcessor {
                    LOG.debug("Interrupted sleep", e);
                }
            }
-
+           */
+           for (int i = 0; i < NUM_RETRIES; i++) {
+               try {
+            	   
+            	   Coordinate c = null;
+            	   
+            	   try {
+                   // For this app, we interpret the payload as UTF-8 chars.
+                   data = decoder.decode(record.getData()).toString();
+                   
+                   // use the ObjectMapper to read the json string and create a tree
+                   JsonNode node = mapper.readTree(data);
+                   
+                   JsonNode geo = node.findValue("geo");
+                   JsonNode coords = geo.findValue("coordinates");
+                   
+                   Iterator<JsonNode> elements = coords.elements();
+                   
+                   double lat = elements.next().asDouble();
+                   double lng = elements.next().asDouble();
+                   
+                   c = new Coordinate(lat, lng);
+                   
+            	   } catch(Exception e) {
+            		   // if we get here, its bad data, ignore and move on to next record
+            	   }
+            	   
+                   if(c != null) {
+                	   String jsonCoords = mapper.writeValueAsString(c);
+                	   jedis.publish("loc", jsonCoords);
+                	   System.out.println("Getting LOC from Jedis");
+                	   Coordinate c1 = jedis.get("loc");
+                	   System.out.println("Loc == " + c1);
+                   }
+      
+					
+                   processedSuccessfully = true;
+                   break;
+               } catch (Throwable t) {
+                   LOG.warn("Caught throwable while processing record " + record, t);
+               }
+               
+               // backoff if we encounter an exception.
+               try {
+                   Thread.sleep(BACKOFF_TIME_IN_MILLIS);
+               } catch (InterruptedException e) {
+                   LOG.debug("Interrupted sleep", e);
+               }
+           }
            if (!processedSuccessfully) {
                LOG.error("Couldn't process record " + record + ". Skipping the record.");
            }
