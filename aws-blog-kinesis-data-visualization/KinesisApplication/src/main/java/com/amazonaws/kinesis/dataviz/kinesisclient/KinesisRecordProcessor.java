@@ -190,7 +190,7 @@ public class KinesisRecordProcessor implements IRecordProcessor {
                 	   String jsonCoords = mapper.writeValueAsString(c);
                 	   jedis.publish("loc", jsonCoords);
                 	   System.out.println("Getting LOC from Jedis");
-                	   Coordinate c1 = jedis.get("loc");
+                	   String c1 = jedis.get("loc");
                 	   System.out.println("Loc == " + c1);
                    }
       
