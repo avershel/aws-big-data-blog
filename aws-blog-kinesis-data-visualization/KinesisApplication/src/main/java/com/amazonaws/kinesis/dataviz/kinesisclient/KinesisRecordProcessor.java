@@ -117,8 +117,10 @@ public class KinesisRecordProcessor implements IRecordProcessor {
            for (int i = 0; i < NUM_RETRIES; i++) {
            	try{
                try {
+               	System.out.println("Decoding data");
                    // For this app, we interpret the payload as UTF-8 chars.
                    data = decoder.decode(record.getData()).toString();
+               	System.out.println(data);
 
                    // use the ObjectMapper to read the json string and create a tree
                    JsonNode node = mapper.readTree(data);
