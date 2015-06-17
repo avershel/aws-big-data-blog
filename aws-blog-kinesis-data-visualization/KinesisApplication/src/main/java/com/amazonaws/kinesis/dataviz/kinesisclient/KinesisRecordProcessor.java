@@ -175,21 +175,21 @@ public class KinesisRecordProcessor implements IRecordProcessor {
                    // use the ObjectMapper to read the json string and create a tree
                    JsonNode node = mapper.readTree(data);
                    tweet1 = mapper.writeValueAsString(node);
-                   //JsonNode geo = node.findValue("geo");
-                   //JsonNode coords = geo.findValue("coordinates");
+                   JsonNode geo = node.findValue("geo");
+                   JsonNode coords = geo.findValue("coordinates");
                    
-                   //Iterator<JsonNode> elements = coords.elements();
+                   Iterator<JsonNode> elements = coords.elements();
                    
-                   //double lat = elements.next().asDouble();
-                   //double lng = elements.next().asDouble();
+                   double lat = elements.next().asDouble();
+                   double lng = elements.next().asDouble();
                    
-                   //c = new Coordinate(lat, lng);
+                   c = new Coordinate(lat, lng);
                    
             	   } catch(Exception e) {
             		   // if we get here, its bad data, ignore and move on to next record
             	   }
             	   
-                   if(tweet1 != null) {
+                   if(c != null) {
                 	   //String jsonCoords = mapper.writeValueAsString(c);
                 	   jedis.publish("loc", tweet1);
 
