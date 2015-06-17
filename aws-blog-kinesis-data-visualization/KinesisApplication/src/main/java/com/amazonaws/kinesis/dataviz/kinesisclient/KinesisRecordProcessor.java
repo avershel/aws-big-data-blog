@@ -114,7 +114,7 @@ public class KinesisRecordProcessor implements IRecordProcessor {
        for (Record record : records) {
            boolean processedSuccessfully = false;
            String data = null;
-           /*******
+           
            for (int i = 0; i < NUM_RETRIES; i++) {
            	
            	try{
@@ -159,7 +159,8 @@ public class KinesisRecordProcessor implements IRecordProcessor {
                    LOG.debug("Interrupted sleep", e);
                }
            }
-           */
+           
+           /*
            for (int i = 0; i < NUM_RETRIES; i++) {
                try {
             	   
@@ -208,6 +209,7 @@ public class KinesisRecordProcessor implements IRecordProcessor {
                    LOG.debug("Interrupted sleep", e);
                }
            }
+           */
            if (!processedSuccessfully) {
                LOG.error("Couldn't process record " + record + ". Skipping the record.");
            }
