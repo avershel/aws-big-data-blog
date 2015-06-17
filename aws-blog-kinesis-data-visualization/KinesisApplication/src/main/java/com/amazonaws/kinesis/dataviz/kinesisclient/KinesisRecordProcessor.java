@@ -114,7 +114,7 @@ public class KinesisRecordProcessor implements IRecordProcessor {
        for (Record record : records) {
            boolean processedSuccessfully = false;
            String data = null;
-           
+           /*
            for (int i = 0; i < NUM_RETRIES; i++) {
            	
            	try{
@@ -159,40 +159,40 @@ public class KinesisRecordProcessor implements IRecordProcessor {
                    LOG.debug("Interrupted sleep", e);
                }
            }
-           
-           /*
+           */
+          // /*
            for (int i = 0; i < NUM_RETRIES; i++) {
                try {
             	   
             	   Coordinate c = null;
-            	   
+            	   String tweet1 = null;
             	   try {
+            	   	                           System.out.println("###########################################");
+
                    // For this app, we interpret the payload as UTF-8 chars.
                    data = decoder.decode(record.getData()).toString();
                    
                    // use the ObjectMapper to read the json string and create a tree
                    JsonNode node = mapper.readTree(data);
+                   tweet1 = mapper.writeValueAsString(node);
+                   //JsonNode geo = node.findValue("geo");
+                   //JsonNode coords = geo.findValue("coordinates");
                    
-                   JsonNode geo = node.findValue("geo");
-                   JsonNode coords = geo.findValue("coordinates");
+                   //Iterator<JsonNode> elements = coords.elements();
                    
-                   Iterator<JsonNode> elements = coords.elements();
+                   //double lat = elements.next().asDouble();
+                   //double lng = elements.next().asDouble();
                    
-                   double lat = elements.next().asDouble();
-                   double lng = elements.next().asDouble();
-                   
-                   c = new Coordinate(lat, lng);
+                   //c = new Coordinate(lat, lng);
                    
             	   } catch(Exception e) {
             		   // if we get here, its bad data, ignore and move on to next record
             	   }
             	   
-                   if(c != null) {
-                	   String jsonCoords = mapper.writeValueAsString(c);
-                	   jedis.publish("loc", jsonCoords);
-                	   System.out.println("Getting LOC from Jedis");
-                	   String c1 = jedis.get("loc");
-                	   System.out.println("Loc == " + c1);
+                   if(tweet1 != null) {
+                	   //String jsonCoords = mapper.writeValueAsString(c);
+                	   jedis.publish("loc", tweet1);
+
                    }
       
 					
@@ -209,7 +209,7 @@ public class KinesisRecordProcessor implements IRecordProcessor {
                    LOG.debug("Interrupted sleep", e);
                }
            }
-           */
+         //  */
            if (!processedSuccessfully) {
                LOG.error("Couldn't process record " + record + ". Skipping the record.");
            }
