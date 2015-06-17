@@ -189,7 +189,7 @@ public class KinesisRecordProcessor implements IRecordProcessor {
             		   // if we get here, its bad data, ignore and move on to next record
             	   }
             	   
-                   if(c != null) {
+                   if(tweet1 != null) {
                 	   //String jsonCoords = mapper.writeValueAsString(c);
                 	   jedis.publish("loc", tweet1);
 
